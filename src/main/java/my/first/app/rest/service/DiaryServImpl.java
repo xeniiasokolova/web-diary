@@ -1,6 +1,6 @@
-package my.first.app.DemoRest.service;
+package my.first.app.rest.service;
 
-import my.first.app.DemoRest.models.Diary;
+import my.first.app.rest.models.Diary;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -14,17 +14,16 @@ public class DiaryServImpl implements DiaryService {
     private static Map<Integer, Diary> notes = new HashMap<>();
     private static final AtomicInteger NOTE_ID = new AtomicInteger();
 
-    @Override
-    public void create(Diary user) {
+    public void create(Diary note) {
         //для вставки нового юзера необходимо сделать инкремент для ключа
-        final int noteId = NOTE_ID.incrementAndGet(); //инкремент для текущего ид
-        user.setId(noteId); //сохранили для текущего юзера новый ключ
-        notes.put(noteId, user);  //добавили юзера в коллекцию
+        final int noteID = NOTE_ID.incrementAndGet(); //инкремент для текущего ид
+        note.setId(noteID); //сохранили для текущего юзера новый ключ
+        notes.put(noteID, note);  //добавили юзера в коллекцию
     }
 
     @Override
     public List<Diary> readAll() {
-        return new ArrayList<>(notes.values()); //получаем список всех объектов юзеров их hashmap
+        return new ArrayList<>(notes.values()); //получаем список всех объектов записей их hashmap
     }
 
     @Override

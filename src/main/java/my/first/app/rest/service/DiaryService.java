@@ -1,6 +1,6 @@
-package my.first.app.DemoRest.service;
+package my.first.app.rest.service;
 
-import my.first.app.DemoRest.models.Diary;
+import my.first.app.rest.models.Diary;
 
 import java.util.List;
 

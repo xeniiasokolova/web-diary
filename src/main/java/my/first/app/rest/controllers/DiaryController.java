@@ -1,7 +1,8 @@
-package my.first.app.DemoRest.controllers;
+package my.first.app.rest.controllers;
 
-import my.first.app.DemoRest.models.Diary;
-import my.first.app.DemoRest.service.DiaryService;
+import my.first.app.rest.models.Diary;
+import my.first.app.rest.repository.DiaryRepository;
+import my.first.app.rest.service.DiaryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,14 +19,17 @@ public class DiaryController {
         this.diaryService = diaryService;
     }
 
-    //вставка юзера
+    @Autowired
+    private DiaryRepository diaryRepository; //объект с помощью которого делаем запросы к таблице
+
+    //вставка заметки
     @PostMapping(value = "/notes")
     public ResponseEntity<?> create(@RequestBody Diary note) {
         diaryService.create(note);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    //получение всех юзеров
+    //получение всех заметок
     @GetMapping(value = "/notes")
     public ResponseEntity<List<Diary>> readAll() {
         final List<Diary> tasks = diaryService.readAll();
@@ -34,7 +38,7 @@ public class DiaryController {
                 new ResponseEntity<>(tasks, HttpStatus.NOT_FOUND);
     }
 
-    //получение юзеров по ид
+    //получение заметок по ид
     @GetMapping(value = "/notes/{id}")
     public ResponseEntity<Diary> read(@PathVariable(name="id") int id) {
         final Diary task = diaryService.read(id);
@@ -43,7 +47,7 @@ public class DiaryController {
                 new ResponseEntity<>(task, HttpStatus.NOT_FOUND);
     }
 
-    //обновление юзера
+    //обновление заметки
     @PutMapping(value = "/notes/{id}")
     public ResponseEntity<?> update(@PathVariable(name="id") int id, @RequestBody Diary note) {
         final boolean isUpdate = diaryService.update(note, id);
@@ -52,7 +56,7 @@ public class DiaryController {
                 new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
     }
 
-    //удаление юзера
+    //удаление заметки
     @DeleteMapping(value = "/notes/{id}")
     public ResponseEntity<?> delete(@PathVariable(name="id") int id) {
         final boolean isDelete = diaryService.delete(id);

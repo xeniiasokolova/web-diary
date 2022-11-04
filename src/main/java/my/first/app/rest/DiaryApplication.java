@@ -1,13 +1,13 @@
-package my.first.app.DemoRest;
+package my.first.app.rest;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class DemoRestApplication {
+public class DiaryApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(DemoRestApplication.class, args);
+		SpringApplication.run(DiaryApplication.class, args);
 	}
 
 }

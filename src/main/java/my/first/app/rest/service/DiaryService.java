@@ -1,41 +1,41 @@
 package my.first.app.rest.service;
 
-import my.first.app.rest.models.Diary;
+import my.first.app.rest.models.Note;
 
 import java.util.List;
 
 public interface DiaryService {
     /**
-     * Создание нового юзера
-     * @param note - заметка, котрую будем добавлять
+     * Создание новой заметки
+     * @param note - заметка, которую будем добавлять
      */
-    void create(Diary note);
+    void create(Note note);
 
     /**
      * Получение всех заметок
      * @return
      */
-    List<Diary> readAll();
+    List<Note> readAll();
 
     /**
-     *
-     * @param id - идентификатор по которому получим заметку
+     * Получить заметку по id
+     * @param id - идентификатор
      * @return
      */
-    Diary read(int id);
+    Note read(Long id);
 
     /**
-     * Обновление информации о юзере по ид
-     * @param note - объект, включающий новые свойства заметки
-     * @param id - по этому ид ищем в базе заметку у которого меняем информацию
+     * Обновить заметку по id
+     * @param note - заметок
+     * @param id - идентификатор
      * @return
      */
-    boolean update(Diary note, int id);
+    boolean update(Note note, Long id);
 
     /**
-     * Удаление заметки по id
-     * @param id
+     * Удалить заметку по id
+     * @param id - идентификатор
      * @return
      */
-    boolean delete(int id);
+    boolean delete(Long id);
 }

@@ -1,13 +1,14 @@
 package my.first.app.rest.controllers;
 
-import my.first.app.rest.models.Diary;
-import my.first.app.rest.repository.DiaryRepository;
+import my.first.app.rest.models.Note;
 import my.first.app.rest.service.DiaryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
@@ -19,37 +20,41 @@ public class DiaryController {
         this.diaryService = diaryService;
     }
 
-    @Autowired
-    private DiaryRepository diaryRepository; //объект с помощью которого делаем запросы к таблице
-
     //вставка заметки
     @PostMapping(value = "/notes")
-    public ResponseEntity<?> create(@RequestBody Diary note) {
+    public ResponseEntity<?> create(@RequestParam("id") Integer id,
+                                    @RequestParam("topic") String topic,
+                                    @RequestParam("description") String description,
+                                    @RequestParam("date") String date) {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+        LocalDateTime dateTime = LocalDateTime.parse(date, formatter);
+        Note note = new Note(Long.valueOf(id), topic, description, dateTime);
         diaryService.create(note);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     //получение всех заметок
     @GetMapping(value = "/notes")
-    public ResponseEntity<List<Diary>> readAll() {
-        final List<Diary> tasks = diaryService.readAll();
-        return tasks != null && !tasks.isEmpty() ?
-                new ResponseEntity<>(tasks, HttpStatus.OK) :
-                new ResponseEntity<>(tasks, HttpStatus.NOT_FOUND);
+    public ResponseEntity<List<Note>> readAll() {
+        final List<Note> notes = diaryService.readAll();
+        return notes != null && !notes.isEmpty() ?
+                new ResponseEntity<>(notes, HttpStatus.OK) :
+                new ResponseEntity<>(notes, HttpStatus.NOT_FOUND);
     }
 
     //получение заметок по ид
     @GetMapping(value = "/notes/{id}")
-    public ResponseEntity<Diary> read(@PathVariable(name="id") int id) {
-        final Diary task = diaryService.read(id);
-        return task != null ?
-                new ResponseEntity<>(task, HttpStatus.OK) :
-                new ResponseEntity<>(task, HttpStatus.NOT_FOUND);
+    public ResponseEntity<Note> read(@PathVariable(name="id") Long id) {
+        final Note note = diaryService.read(id);
+        return note != null ?
+                new ResponseEntity<>(note, HttpStatus.OK) :
+                new ResponseEntity<>(note, HttpStatus.NOT_FOUND);
     }
 
     //обновление заметки
     @PutMapping(value = "/notes/{id}")
-    public ResponseEntity<?> update(@PathVariable(name="id") int id, @RequestBody Diary note) {
+    public ResponseEntity<?> update(@PathVariable(name="id") Long id, @RequestBody Note note) {
         final boolean isUpdate = diaryService.update(note, id);
         return isUpdate ?
                 new ResponseEntity<>(HttpStatus.OK) :
@@ -58,7 +63,7 @@ public class DiaryController {
 
     //удаление заметки
     @DeleteMapping(value = "/notes/{id}")
-    public ResponseEntity<?> delete(@PathVariable(name="id") int id) {
+    public ResponseEntity<?> delete(@PathVariable(name="id") Long id) {
         final boolean isDelete = diaryService.delete(id);
         return isDelete ?
                 new ResponseEntity<>(HttpStatus.OK) :

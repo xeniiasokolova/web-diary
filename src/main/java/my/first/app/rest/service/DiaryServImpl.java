@@ -1,49 +1,59 @@
 package my.first.app.rest.service;
 
-import my.first.app.rest.models.Diary;
+import my.first.app.rest.models.Note;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.HashMap;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
+@Repository
+@Transactional
 public class DiaryServImpl implements DiaryService {
-    private static Map<Integer, Diary> notes = new HashMap<>();
-    private static final AtomicInteger NOTE_ID = new AtomicInteger();
 
-    public void create(Diary note) {
-        //для вставки нового юзера необходимо сделать инкремент для ключа
-        final int noteID = NOTE_ID.incrementAndGet(); //инкремент для текущего ид
-        note.setId(noteID); //сохранили для текущего юзера новый ключ
-        notes.put(noteID, note);  //добавили юзера в коллекцию
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    @Override
+    @Transactional
+    public void create(Note note) {
+        entityManager.persist(note);
     }
 
     @Override
-    public List<Diary> readAll() {
-        return new ArrayList<>(notes.values()); //получаем список всех объектов записей их hashmap
+    public List<Note> readAll() {
+        return entityManager.createQuery("from Note", Note.class).getResultList();
     }
 
     @Override
-    public Diary read(int id) {
-        return notes.get(id);
+    public Note read(Long id) {
+        return entityManager.find(Note.class, id);
     }
 
     @Override
-    public boolean update(Diary note, int id) {
-        //проверим, что в users есть юзер с таким ид
-        if (notes.containsKey(id)) {
-            note.setId(id);
-            notes.put(id, note);
+    public boolean update(Note note, Long id) {
+        try {
+            Note noteOld = entityManager.find(Note.class, id);
+            noteOld.setId(note.getId());
+            noteOld.setDate(note.getDate());
+            noteOld.setDescription(note.getDescription());
+            noteOld.setTopic(note.getTopic());
             return true;
+        } catch (Exception e) {
+            return false;
         }
-        return false;
     }
 
     @Override
-    public boolean delete(int id) {
-        return notes.remove(id) != null;
+    public boolean delete(Long id) {
+        Note note = entityManager.find(Note.class, id);
+        try {
+            entityManager.remove(note);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }
